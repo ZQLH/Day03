@@ -1,22 +1,23 @@
 package activity;
 
 import android.os.Bundle;
-import android.os.PersistableBundle;
 import android.support.annotation.Nullable;
 import android.support.v4.view.ViewPager;
 import android.support.v4.widget.DrawerLayout;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarDrawerToggle;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Toast;
+import android.view.ViewTreeObserver;
 
-import com.astuetz.PagerSlidingTabStrip;
+import com.astuetz.PagerSlidingTabStripExtends;
 import com.example.nidaye.day.R;
 
 import adapter.MainFragmentPagerAdapter;
-import utils.PagerSlidingTabStripExtends;
+import base.bean.BaseFragment;
+import base.bean.FragmentFactory;
+import base.bean.LoadingPager;
 import utils.UIUtils;
 
 /**
@@ -25,6 +26,7 @@ import utils.UIUtils;
 
 public class MainActivity extends AppCompatActivity {
 
+    private static final String TAG = "huan";
     private DrawerLayout mDrawerLayout;
     private ActionBarDrawerToggle mToggle;
     private ViewPager mMainViewpager;
@@ -38,9 +40,45 @@ public class MainActivity extends AppCompatActivity {
         mMainViewpager = (ViewPager) findViewById(R.id.main_viewpager);
         mMainTabs = (PagerSlidingTabStripExtends) findViewById(R.id.main_tabs);
         initActionBar();
-        initView();
         initActionBarDrawerToggle();
         initData();
+        initListener();
+    }
+
+    private void initListener() {
+        final MyOnpageChangeListener myOnpageChangeListener=new MyOnpageChangeListener();
+        mMainTabs.setOnPageChangeListener(myOnpageChangeListener);
+        mMainViewpager.getViewTreeObserver().addOnGlobalLayoutListener(new ViewTreeObserver.OnGlobalLayoutListener() {
+            @Override
+            public void onGlobalLayout() {
+                //viewpager已经展示给用户看
+                myOnpageChangeListener.onPageSelected(0);
+                mMainViewpager.getViewTreeObserver().removeGlobalOnLayoutListener(this);
+            }
+        });
+    }
+    class MyOnpageChangeListener implements ViewPager.OnPageChangeListener{
+
+        @Override
+        public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
+
+        }
+
+        @Override
+        public void onPageSelected(int position) {
+            Log.i(TAG, "onPageSelected: 选中:"+mMainTitles[position]);
+            // 根据position找到对应页面的Fragment
+            BaseFragment baseFragment = FragmentFactory.mCacheFragments.get(position);
+            // 拿到Fragment里面的LoadingPager
+            LoadingPager loadingPager=baseFragment.getLoadingPager();
+            // 触发加载数据
+            loadingPager.triggerLoadData();
+        }
+
+        @Override
+        public void onPageScrollStateChanged(int state) {
+
+        }
     }
 
     private void initData() {
@@ -51,21 +89,15 @@ public class MainActivity extends AppCompatActivity {
         mMainTabs.setViewPager(mMainViewpager);
     }
 
-    private void initView() {
-        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerLayout);
-    }
-
     private void initActionBar(){
         ActionBar supportActionBar=getSupportActionBar();
         supportActionBar.setTitle("GooglePlay");
-//        supportActionBar.setSubtitle("副标题");
-//        supportActionBar.setIcon(R.drawable.ic_launcher);
-//        supportActionBar.setLogo(R.mipmap.ic_launcher);
         supportActionBar.setDisplayShowHomeEnabled(true);
         supportActionBar.setDisplayUseLogoEnabled(true);
         supportActionBar.setDisplayHomeAsUpEnabled(true);
     }
     private void initActionBarDrawerToggle(){
+        mDrawerLayout = (DrawerLayout) findViewById(R.id.main_drawerLayout);
         mToggle = new ActionBarDrawerToggle(this,mDrawerLayout, R.string.open,R.string.close);
         //替换回退部分的UI效果
         mToggle.syncState();
@@ -83,8 +115,5 @@ public class MainActivity extends AppCompatActivity {
                 break;
         }
         return super.onOptionsItemSelected(item);
-    }
-    public void notifyData(){
-
     }
 }

@@ -11,6 +11,8 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import java.util.Random;
+
 import base.bean.BaseFragment;
 import base.bean.LoadingPager;
 import utils.UIUtils;
@@ -24,7 +26,11 @@ public class HomeFragment extends BaseFragment {
     @Override
     public LoadingPager.LoadedResult initData() {
         SystemClock.sleep(2000);//模拟耗时的网络请求
-        return LoadingPager.LoadedResult.SUCCESS;
+        Random random=new Random();
+        int index=random.nextInt(3);
+        LoadingPager.LoadedResult[] loadedResults={LoadingPager.LoadedResult.EMPTY, LoadingPager.LoadedResult.ERROR, LoadingPager.LoadedResult.SUCCESS};
+        //随机返回一种情况
+        return loadedResults[index];
     }
 
     @Override

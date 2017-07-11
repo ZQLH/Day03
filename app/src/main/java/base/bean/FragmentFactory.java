@@ -2,6 +2,9 @@ package base.bean;
 
 import android.support.v4.app.Fragment;
 
+import java.util.HashMap;
+import java.util.Map;
+
 import fragment.AppFragment;
 import fragment.CategoryFragment;
 import fragment.GameFragment;
@@ -15,6 +18,7 @@ import fragment.SubjectFragment;
  */
 
 public class FragmentFactory {
+
     //定义关于fragment的选择器
     public static final int FRAGMENT_HOME = 0;//首页
     public static final int FRAGMENT_APP = 1;//应用
@@ -24,8 +28,17 @@ public class FragmentFactory {
     public static final int FRAGMENT_CATEGORY = 5;//分类
     public static final int FRAGMENT_HOT = 6;//排行
 
-    public static Fragment createFragment(int position){
-        Fragment fragment =null;
+
+    /** 用于缓存Fragment的实例 */
+    public static Map<Integer,BaseFragment> mCacheFragments=new HashMap<>();
+
+    public static BaseFragment createFragment(int position){
+        BaseFragment fragment =null;
+        //如果集合中缓存了，直接返回值给调用方法，下面的代码就不走了
+        if (mCacheFragments.containsKey(position)){
+            fragment=mCacheFragments.get(position);
+            return fragment;
+        }
         switch (position){
             case FRAGMENT_HOME:
                 fragment=new HomeFragment();
@@ -49,9 +62,7 @@ public class FragmentFactory {
                 fragment = new HotFragment();
                 break;
         }
+        mCacheFragments.put(position,fragment);
         return fragment;
     }
-
-
-
 }

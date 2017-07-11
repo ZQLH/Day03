@@ -16,7 +16,7 @@ import utils.UIUtils;
  * Created by nidaye on 2017/7/9.
  */
 
-public class MainFragmentPagerAdapter extends FragmentStatePagerAdapter{
+public class MainFragmentPagerAdapter extends FragmentPagerAdapter{
 
 
     private  String[] mMainTitles;
@@ -27,13 +27,10 @@ public class MainFragmentPagerAdapter extends FragmentStatePagerAdapter{
     public MainFragmentPagerAdapter(FragmentManager fm) {
         super(fm);
         mMainTitles = UIUtils.getStrings(R.array.main_titles);
-        Log.i("itheima", "mMainTitles: "+mMainTitles.toString());
     }
 
     @Override
     public Fragment getItem(int position) {
-//        LogUtils.s("初始化->"+mMainTitles[position]);
-        Log.i("itheima", mMainTitles[position]);
         Fragment fragment= FragmentFactory.createFragment(position);
         return fragment;
     }

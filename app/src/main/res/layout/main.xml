@@ -2,22 +2,25 @@
 <android.support.v4.widget.DrawerLayout
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:itheima="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
     android:id="@+id/main_drawerLayout"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    >
 
-    <!-- 主布局-->
+    <!--菜单区域(右菜单)-->
     <FrameLayout
-        android:layout_width="match_parent"
+        android:layout_width="180dp"
         android:layout_height="match_parent"
-        />
+        android:layout_gravity="right"
+        android:background="#0f0"/>
 
-    <!-- Menu布局，注意：必须设置"android:layout_gravity"属性 -->
+    <!--菜单区域(左菜单)-->
     <FrameLayout
-        android:layout_width="200dp"
+        android:layout_width="180dp"
         android:layout_height="match_parent"
         android:layout_gravity="left"
-        android:background="#0f0"/>
+        android:background="#f00"/>
 
     <!--内容区域-->
     <LinearLayout
@@ -26,15 +29,15 @@
         android:orientation="vertical">
 
         <!--PagerSlidingTabStrp-->
-        <utils.PagerSlidingTabStripExtends
+        <com.astuetz.PagerSlidingTabStripExtends
             android:id="@+id/main_tabs"
             android:layout_width="match_parent"
+            android:layout_height="48dp"
             itheima:pstsIndicatorColor="@color/tab_indicator_selected"
             itheima:pstsSelectedTabTextColor="@color/tab_text_selected"
-            itheima:pstsTabTextColor="@color/tab_text_normal"
-            itheima:pstsTabTextSize="16sp"
             itheima:pstsSelectedTabTextSize="18sp"
-            android:layout_height="48dp"/>
+            itheima:pstsTabTextColor="@color/tab_text_normal"
+            itheima:pstsTabTextSize="16sp"/>
 
         <!--ViewPager-->
         <android.support.v4.view.ViewPager

@@ -14,41 +14,47 @@ import utils.UIUtils;
  */
 
 public abstract class BaseFragment extends Fragment {
+
+    private LoadingPager mLoadingPager;
+
     @Override
     public void onCreate(@Nullable Bundle savedInstanceState) {
-        init();
         super.onCreate(savedInstanceState);
     }
 
-    private void init() {
-
-    }
 
     @Nullable
     @Override
     public View onCreateView(LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        LoadingPager loadingPager=new LoadingPager(UIUtils.getContext()) {
-            /**
-             * @des 在子线程中真正的加载具体的数据
-             * @called triggerLoadData()方法被调用的时候
-             */
-            @Override
-            public LoadedResult initData() {
-                return BaseFragment.this.initData();
-            }
-            /**
-             * @return
-             * @des 决定成功视图长什么样子(需要定义成功视图)
-             * @des 数据和视图的绑定过程
-             * @called triggerLoadData()方法被调用, 而且数据加载完成了, 而且数据加载成功
-             */
-            @Override
-            public View initSuccessView() {
-                return BaseFragment.this.initSuccessView();
-            }
-        };
-        loadingPager.triggerLoadData();
-        return loadingPager;
+        /**
+         * @des 在子线程中真正的加载具体的数据
+         * @called triggerLoadData()方法被调用的时候
+         */ /**
+          * @return
+          * @des 决定成功视图长什么样子(需要定义成功视图)
+          * @des 数据和视图的绑定过程
+          * @called triggerLoadData()方法被调用, 而且数据加载完成了, 而且数据加载成功
+          */mLoadingPager = new LoadingPager(UIUtils.getContext()) {
+              /**
+               * @des 在子线程中真正的加载具体的数据
+               * @called triggerLoadData()方法被调用的时候
+               */
+              @Override
+              public LoadedResult initData() {
+                  return BaseFragment.this.initData();
+              }
+              /**
+               * @return
+               * @des 决定成功视图长什么样子(需要定义成功视图)
+               * @des 数据和视图的绑定过程
+               * @called triggerLoadData()方法被调用, 而且数据加载完成了, 而且数据加载成功
+               */
+              @Override
+              public View initSuccessView() {
+                  return BaseFragment.this.initSuccessView();
+              }
+          };
+        return mLoadingPager;
     }
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
@@ -77,4 +83,8 @@ public abstract class BaseFragment extends Fragment {
      * @called triggerLoadData()方法被调用, 而且数据加载完成了, 而且数据加载成功
      */
     protected abstract View initSuccessView();
+
+    public LoadingPager getLoadingPager() {
+        return mLoadingPager;
+    }
 }

@@ -1,7 +1,9 @@
 package base.bean;
 
 import android.content.Context;
+import android.util.Log;
 import android.view.View;
+import android.widget.Button;
 import android.widget.FrameLayout;
 
 import com.example.nidaye.day.R;
@@ -29,6 +31,7 @@ public abstract class LoadingPager extends FrameLayout {
     private View mErrorView;
     private View mEmptyView;
     private View mSuccessView;
+    private LoadDataTask mLoad;
 
     public LoadingPager(Context context) {
         super(context);
@@ -42,6 +45,13 @@ public abstract class LoadingPager extends FrameLayout {
 
         //错误视图
         mErrorView = View.inflate(UIUtils.getContext(), R.layout.pager_error, null);
+        Button bt= (Button) mErrorView.findViewById(R.id.error_btn_retry);
+        bt.setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                triggerLoadData();
+            }
+        });
         this.addView(mErrorView);
 
         //空视图
@@ -54,17 +64,7 @@ public abstract class LoadingPager extends FrameLayout {
 
     //根据mCurState来确定显示哪一个View,以及View的样子
     private void refreshViewByState() {
-        if (mSuccessView == null && mCurState == STATE_SUCCESS) {
-            mSuccessView = initSuccessView();
-            this.addView(mSuccessView);
-        }
-        // 控制 成功视图的 显示隐藏
-        if (mSuccessView != null) {
-            if (mCurState == STATE_SUCCESS) {
-                mSuccessView.setVisibility(View.VISIBLE);
-            } else {
-                mSuccessView.setVisibility(View.GONE);
-            }
+
 
         if (mCurState == STATE_LOADING) {
             mLoadingView.setVisibility(View.VISIBLE);
@@ -85,7 +85,17 @@ public abstract class LoadingPager extends FrameLayout {
         } else {
             mEmptyView.setVisibility(View.GONE);
         }
-
+        if (mSuccessView == null && mCurState == STATE_SUCCESS) {
+            mSuccessView = initSuccessView();
+            this.addView(mSuccessView);
+        }
+        // 控制 成功视图的 显示隐藏
+        if (mSuccessView != null) {
+            if (mCurState == STATE_SUCCESS) {
+                mSuccessView.setVisibility(View.VISIBLE);
+            } else {
+                mSuccessView.setVisibility(View.GONE);
+            }
     }
     }
     /**
@@ -93,16 +103,25 @@ public abstract class LoadingPager extends FrameLayout {
      * @called 外界想让LoadingPager触发加载数据的时候调用
      */
     public void triggerLoadData() {
-        new Thread(new LoadDataTask()).start();
+        if (mCurState==STATE_SUCCESS){
+            return;
+        }
+        if (mLoad==null){
+            //控制数据加载之前显示加载中的师徒
+            mCurState=STATE_LOADING;
+            refreshViewByState();
+            mLoad = new LoadDataTask();
+            new Thread(mLoad).start();
+        }
     }
 
     //改方法被触发加载数据的时候调用，且可以实现更新主线程中的UI的方法
     class LoadDataTask implements Runnable {
         @Override
         public void run() {
+            Log.i("testtime",android.os.Process.myTid()+"1");
             //真正的在子线程中加载具体的数据-->得到数据
             LoadedResult tempState = initData();
-
             //处理数据
             mCurState = tempState.getState();
             MyApplication.getMainThreadHandler().post(new Runnable() {
@@ -110,9 +129,12 @@ public abstract class LoadingPager extends FrameLayout {
                 public void run() {
                     // 刷新UI(决定到底提供4种视图中的哪一种视图)
                     refreshViewByState();//mCurState-->Int
+
                 }
             });
+            mLoad=null;
         }
+
     }
 
     /**
