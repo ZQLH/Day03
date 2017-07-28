@@ -1,5 +1,9 @@
 [
     {
+        "merged": "E:\\AndroidStudioProjects\\Project0\\Day03\\PagerSlidingTabStrip\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\background_tab.xml",
+        "source": "E:\\AndroidStudioProjects\\Project0\\Day03\\PagerSlidingTabStrip\\build\\intermediates\\bundles\\debug\\res\\drawable\\background_tab.xml"
+    },
+    {
         "merged": "C:\\Projects\\Day03\\PagerSlidingTabStrip\\build\\intermediates\\res\\merged\\androidTest\\debug\\drawable\\background_tab.xml",
         "source": "C:\\Projects\\Day03\\PagerSlidingTabStrip\\build\\intermediates\\bundles\\debug\\res\\drawable\\background_tab.xml"
     }
